@@ -5,29 +5,29 @@
 const STORE = {
   // Questions (with answers)
   prompt: [{
-    question1: 'question1',
+    question: 'question1',
     answers: ['1', '2', '3','4','5'],
     correctChoice: 1
   }, {
-    question2: 'question2',
+    question: 'question2',
     answers: ['1', '2', '3','4','5'],
     correctChoice: 1
   }, {
-    question3: 'question3',
+    question: 'question3',
     answers: ['1', '2', '3','4','5'],
     correctChoice: 1
   }, {
-    question4: 'question4',
+    question: 'question4',
     answers: ['1', '2', '3','4','5'],
     correctChoice: 1
   }, {
-    question5: 'question5',
+    question: 'question5',
     answers: ['1', '2', '3','4','5'],
     correctChoice: 1
   }],
   // User's answer choice(s)
   //what is the current view?
-  view: 'intro',
+  view: 'questions',
   // What is the current question?
   currentQuestion: 0,
   // Score? Anything else?
@@ -78,16 +78,15 @@ function handleFinalPageView() {
 function handleResetQuiz() {
   $('.final').on('click', '.play-again-submit',(event) => {
     event.preventDefault();
-    console.log(event);
+    //console.log(event);
     STORE.view = 'intro';
-    //$('.intro-message').show();
-    //generateIntroTextHTML();
     renderContent();
   });
 }
 
 // Make this dynamcially change to each questions content
-function generateQuestionsHTML() {
+function generateQuestionsHTML(q, index) {
+console.log('here', q, index);
   const questionsText = `<form id="questionForm">
             <h2>Question</h2>
             <p>
@@ -116,6 +115,27 @@ function generateQuestionsHTML() {
   return questionsText;
 }
 
+function getQuestions(data) {
+  let questionsArray = [];
+  data.map(k => {
+    for (let key in k) {
+      if (key === 'question') {
+        questionsArray.push(k[key]);
+      }
+    }
+  });
+  return questionsArray;
+}
+
+function generateQuestionString(questions) {
+  
+  const question = getQuestions(STORE.prompt).map((q, index) => generateQuestionsHTML(q, index));
+
+  return question.join('');
+}
+
+
+
 function generateFeedbackHTML() {
   const feedbackText = ` <div class="right">You got it right</div>
         <div class="wrong">You got it wrong</div>
@@ -140,6 +160,7 @@ function renderContent(){
   else if(STORE.view === 'questions') {
     // serve the question and answers html form "questionForm"
     $('.intro-message').hide();
+    generateQuestionString();
     generateQuestionsHTML();
   }
   else if(STORE.view === 'feedback') {
