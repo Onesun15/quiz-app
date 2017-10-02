@@ -27,18 +27,27 @@ const STORE = {
   }],
   // User's answer choice(s)
   //what is the current view?
-  view: 'questions',
+  view: 'intro',
   // What is the current question?
   currentQuestion: 0,
   // Score? Anything else?
-  score: 0
+  score: 0,
 };
 
 function nextQuestion () {
   if (STORE.currentQuestion === STORE.question.length -1) {
-    STORE.view = 'outro';
+    STORE.view = 'final';
   }
   STORE.currentQuestion++;
+}
+
+function setView(view) {
+  STORE.view = view;
+  renderContent();
+}
+
+function initQuiz() {
+  setView('intro');
 }
 
 function generateIntroTextHTML() {
@@ -52,8 +61,8 @@ function handleStartSubmit() {
   $('.intro-message').on('click', '.intro-submit',(event) => {
     event.preventDefault();
     // console.log(event);
-    STORE.view = 'questions';
-    renderContent();
+    // STORE.view = 'questions';
+    setView('questions');
   });
 }
 
@@ -61,8 +70,7 @@ function handleFeedbackSubmit() {
   $('.question-page').on('click', '.feedback-submit',(event) => {
     event.preventDefault();
     //console.log(event);
-    STORE.view = 'feedback';
-    renderContent();
+    setView('feedback');
   });
 }
 
@@ -70,8 +78,7 @@ function handleFinalPageView() {
   $('.feedback').on('click', '.continue-submit',(event) => {
     event.preventDefault();
     //console.log(event);
-    STORE.view = 'final';
-    renderContent();
+    setView('final');
   });
 }
 
@@ -79,14 +86,17 @@ function handleResetQuiz() {
   $('.final').on('click', '.play-again-submit',(event) => {
     event.preventDefault();
     //console.log(event);
-    STORE.view = 'intro';
-    renderContent();
+    setView('intro');
   });
 }
 
 // Make this dynamcially change to each questions content
+// pass in questionText, arr of choices
 function generateQuestionsHTML(q, index) {
-console.log('here', q, index);
+// If count is null change to zero
+// If index === store count render question and answer
+// Increment count in store 
+  console.log('here', q, index);
   const questionsText = `<form id="questionForm">
             <h2>Question</h2>
             <p>
@@ -115,25 +125,45 @@ console.log('here', q, index);
   return questionsText;
 }
 
-function getQuestions(data) {
-  let questionsArray = [];
-  data.map(k => {
-    for (let key in k) {
-      if (key === 'question') {
-        questionsArray.push(k[key]);
-      }
-    }
-  });
-  return questionsArray;
-}
 
-function generateQuestionString(questions) {
+// function getQuestions(data) {
+//   let questionsArray = [];
+//   data.map(k => {
+//     for (let key in k) {
+//       if (key === 'question') {
+//         questionsArray.push(k[key]);
+//       }
+//     }
+//   });
+//   return questionsArray;
+// }
+
+
+console.log(STORE.prompt[1]['question']);
+// function generateQuestionString(questions) {
+ 
   
-  const question = getQuestions(STORE.prompt).map((q, index) => generateQuestionsHTML(q, index));
 
-  return question.join('');
-}
 
+//  const question = getQuestions(STORE.prompt).map((q, index) => generateQuestionsHTML(q, index));
+
+//   // if (STORE.currentQuestion === null && STORE.view === 'questions') {
+//   //   STORE.currentQuestion === 0;
+//   // }
+//   initQuiz() {
+//     setView('start')
+//   }
+
+//   setView (view) {
+//     STORE.view = view//
+//     render()
+//   }
+//   }
+//   let valueIndex = STORE.currentQuestion;
+//   const question = STORE.prompt[valueIndex]['question'];
+//   console.log('question', question);
+//   return question.join('');
+// }
 
 
 function generateFeedbackHTML() {
@@ -160,7 +190,7 @@ function renderContent(){
   else if(STORE.view === 'questions') {
     // serve the question and answers html form "questionForm"
     $('.intro-message').hide();
-    generateQuestionString();
+   // generateQuestionString();
     generateQuestionsHTML();
   }
   else if(STORE.view === 'feedback') {
@@ -202,6 +232,7 @@ function handleAnswerSubmitted() {
 
 // On DOM Ready:
 $(() => {
+
   handleAnswerSubmitted();
   handleStartSubmit();
   handleFeedbackSubmit();
