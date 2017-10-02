@@ -1,33 +1,66 @@
 'use strict';
 /* global $*/
 
-
-const STORE = {
-  prompt: [{
-    question: 'question0',
-    answers: ['1', '2', '3','4','5'],
-    correctChoice: 1
-  }, {
-    question: 'question1',
-    answers: ['1', '2', '3','4','5'],
-    correctChoice: 1
-  }, {
-    question: 'question2',
-    answers: ['1', '2', '3','4','5'],
-    correctChoice: 1
-  }, {
-    question: 'question3',
-    answers: ['1', '2', '3','4','5'],
-    correctChoice: 1
-  }, {
-    question: 'question4',
-    answers: ['1', '2', '3','4','5'],
-    correctChoice: 1
-  }],
+const initialState = {
+  prompt: [
+    {
+      question: 'question0',
+      answers: ['1', '2', '3', '4', '5'],
+      correctChoice: 1,
+    },
+    {
+      question: 'question1',
+      answers: ['1', '2', '3', '4', '5'],
+      correctChoice: 1,
+    },
+    {
+      question: 'question2',
+      answers: ['1', '2', '3', '4', '5'],
+      correctChoice: 1,
+    },
+    {
+      question: 'question3',
+      answers: ['1', '2', '3', '4', '5'],
+      correctChoice: 1,
+    },
+    {
+      question: 'question4',
+      answers: ['1', '2', '3', '4', '5'],
+      correctChoice: 1,
+    },
+  ],
   view: 'intro',
   currentQuestion: 0,
   score: 0,
 };
+
+let STORE = Object.assign({}, initialState);
+
+/********************     `CHECK VEIW STATE`    *******************/
+
+function renderContent() {
+  if (STORE.view === 'intro') {
+    $('.intro-message').show();
+    $('.final').hide();
+    generateIntroTextHTML();
+  } else if (STORE.view === 'questions') {
+    // serve the question and answers html form "questionForm"
+    $('.intro-message').hide();
+    $('.question-page').show();
+    generateQuestionString();
+    //generateQuestionsHTML();
+  } else if (STORE.view === 'feedback') {
+    // serve the feedback html
+    $('.question-page').hide();
+    $('.feedback').show();
+    generateFeedbackHTML();
+  } else if (STORE.view === 'final') {
+    // serve the feedback html
+    $('.feedback').hide();
+    $('.final').show();
+    generateFinalHTML();
+  }
+}
 
 // Need to work on this next......
 // function nextQuestion () {
@@ -37,12 +70,20 @@ const STORE = {
 //   STORE.currentQuestion++;
 // }
 
+console.log('====================================');
+console.log('STORe', STORE);
+console.log('====================================');
+
 function setView(view) {
   STORE.view = view;
   renderContent();
 }
 
 function initQuiz() {
+  STORE = Object.assign({}, initialState);
+  console.log('====================================');
+  console.log(STORE);
+  console.log('====================================');
   setView('intro');
 }
 
@@ -53,10 +94,9 @@ function generateIntroTextHTML() {
         <button class="intro-submit" type="submit">Start Quiz</button></h1>`;
   $('.intro-message').html(introText);
   return introText;
-} 
+}
 
 function generateQuestionsHTML(question, answers) {
-
   const questionsText = `<form id="questionForm">
             <h2>${question}</h2>
             <p>
@@ -92,8 +132,8 @@ function generateQuestionString() {
   const answers = STORE.prompt[count]['answers'];
   generateQuestionsHTML(question, answers);
   STORE.currentQuestion++;
-  return question; 
-} 
+  return question;
+}
 
 function generateFeedbackHTML() {
   const feedbackText = ` <div class="right">You got it right</div>
@@ -109,37 +149,10 @@ function generateFinalHTML() {
   $('.final').html(finalText);
 }
 
-/********************     `CHECK VEIW STATE`    *******************/
-
-function renderContent() {
-  if (STORE.view === 'intro') {
-    $('.intro-message').show();
-    $('.final').hide();
-    generateIntroTextHTML();
-  }
-  else if(STORE.view === 'questions') {
-    // serve the question and answers html form "questionForm"
-    $('.intro-message').hide();
-    generateQuestionString();
-    //generateQuestionsHTML();
-  }
-  else if(STORE.view === 'feedback') {
-    // serve the feedback html
-    $('.question-page').hide();
-    generateFeedbackHTML();
-  }
-  else if(STORE.view === 'final') {
-    // serve the feedback html
-    $('.feedback').hide();
-    $('.final').show();
-    generateFinalHTML();
-  }
-}
-
 /********************     `EVENT HANDLERS`    *******************/
 
 function handleStartSubmit() {
-  $('.intro-message').on('click', '.intro-submit',(event) => {
+  $('.intro-message').on('click', '.intro-submit', event => {
     event.preventDefault();
     // console.log(event);
     // STORE.view = 'questions';
@@ -148,7 +161,7 @@ function handleStartSubmit() {
 }
 
 function handleFeedbackSubmit() {
-  $('.question-page').on('click', '.feedback-submit',(event) => {
+  $('.question-page').on('click', '.feedback-submit', event => {
     event.preventDefault();
     //console.log(event);
     setView('feedback');
@@ -156,15 +169,23 @@ function handleFeedbackSubmit() {
 }
 
 function handleFinalPageView() {
-  $('.feedback').on('click', '.continue-submit',(event) => {
+  $('.feedback').on('click', '.continue-submit', event => {
     event.preventDefault();
     //console.log(event);
-    setView('final');
+    STORE.currentQuestion + 1;
+
+    if (STORE.prompt.length - 1 === STORE.currentQuestion) {
+      setView('final');
+    } else {
+      setView('questions');
+      $('.feedback').hide();
+      $('.question-page').show();
+    }
   });
 }
 
 function handleResetQuiz() {
-  $('.final').on('click', '.play-again-submit',(event) => {
+  $('.final').on('click', '.play-again-submit', event => {
     event.preventDefault();
     //console.log(event);
     initQuiz();
@@ -180,10 +201,9 @@ $(() => {
   renderContent();
   handleStartSubmit();
   handleFeedbackSubmit();
-  handleFinalPageView();
+  handleFinalPageView(STORE);
   handleResetQuiz();
 });
-
 
 /********************     INSTRUCTOR STUBS    *******************/
 
@@ -211,9 +231,7 @@ $(() => {
 //   });
 // }
 
-
-
-/********************     TEST CODE IDEAS  ********************  
+/********************     TEST CODE IDEAS  ********************
 
 // function getQuestions(data) {
 //   let questionsArray = [];
