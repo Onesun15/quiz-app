@@ -42,9 +42,9 @@ function setView(view) {
   renderContent();
 }
 
-// function initQuiz() {
-//   setView('intro');
-// }
+function initQuiz() {
+  setView('intro');
+}
 
 /********************     `HTML GENERATORS`    *******************/
 
@@ -167,6 +167,7 @@ function handleResetQuiz() {
   $('.final').on('click', '.play-again-submit',(event) => {
     event.preventDefault();
     //console.log(event);
+    initQuiz();
     setView('intro');
   });
 }
