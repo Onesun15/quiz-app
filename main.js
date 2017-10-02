@@ -5,6 +5,10 @@
 const STORE = {
   // Questions (with answers)
   prompt: [{
+    question: 'question0',
+    answers: ['1', '2', '3','4','5'],
+    correctChoice: 1
+  }, {
     question: 'question1',
     answers: ['1', '2', '3','4','5'],
     correctChoice: 1
@@ -18,10 +22,6 @@ const STORE = {
     correctChoice: 1
   }, {
     question: 'question4',
-    answers: ['1', '2', '3','4','5'],
-    correctChoice: 1
-  }, {
-    question: 'question5',
     answers: ['1', '2', '3','4','5'],
     correctChoice: 1
   }],
@@ -92,13 +92,12 @@ function handleResetQuiz() {
 
 // Make this dynamcially change to each questions content
 // pass in questionText, arr of choices
-function generateQuestionsHTML(q, index) {
+function generateQuestionsHTML(question) {
 // If count is null change to zero
 // If index === store count render question and answer
 // Increment count in store 
-  console.log('here', q, index);
   const questionsText = `<form id="questionForm">
-            <h2>Question</h2>
+            <h2>${question}</h2>
             <p>
             <input type ="radio" name = "answer" id ="answerChoice1">
             <label for="answerChoice1">Answer</label>
@@ -140,18 +139,26 @@ function generateQuestionsHTML(q, index) {
 
 
 //console.log(STORE.prompt[1]['question']);
-function generateQuestionString(questions) {
- 
-  
-const question = '';
+function generateQuestionString() {
+  const cQ = STORE.currentQuestion;
+  const question = STORE.prompt.map((q, index) => {
+    console.log(cQ, index);
+    if (cQ === index){
+      for (let key in q) {
+        console.log(q[key]);
+        generateQuestionsHTML(q[key])
+      }
+    }
+  });
+  // if (STORE.currentQuestion === STORE.prompt[0]){
+  console.log(question.join(''));
+  STORE.currentQuestion++;
+  return question.join(''); 
+} 
 
-//if (STORE.currentCount === STORE.prompt[STORE.currentCount])
- //const question = getQuestions(STORE.prompt).map((q, index) => generateQuestionsHTML(q, index));
-console.log( STORE.prompt[STORE.currentCount]);  
- 
 
-  return question;
-}
+//   return question;
+// }
 generateQuestionString();
 
 function generateFeedbackHTML() {
@@ -178,7 +185,7 @@ function renderContent(){
   else if(STORE.view === 'questions') {
     // serve the question and answers html form "questionForm"
     $('.intro-message').hide();
-   // generateQuestionString();
+    // generateQuestionString();
     generateQuestionsHTML();
   }
   else if(STORE.view === 'feedback') {
