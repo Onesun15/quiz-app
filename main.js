@@ -27,7 +27,7 @@ const STORE = {
   }],
   // User's answer choice(s)
   //what is the current view?
-  view: 'intro',
+  view: 'questions',
   // What is the current question?
   currentQuestion: 0,
   // Score? Anything else?
@@ -139,32 +139,20 @@ function generateQuestionsHTML(q, index) {
 // }
 
 
-console.log(STORE.prompt[1]['question']);
-// function generateQuestionString(questions) {
+//console.log(STORE.prompt[1]['question']);
+function generateQuestionString(questions) {
  
   
+const question = '';
 
+//if (STORE.currentCount === STORE.prompt[STORE.currentCount])
+ //const question = getQuestions(STORE.prompt).map((q, index) => generateQuestionsHTML(q, index));
+console.log( STORE.prompt[STORE.currentCount]);  
+ 
 
-//  const question = getQuestions(STORE.prompt).map((q, index) => generateQuestionsHTML(q, index));
-
-//   // if (STORE.currentQuestion === null && STORE.view === 'questions') {
-//   //   STORE.currentQuestion === 0;
-//   // }
-//   initQuiz() {
-//     setView('start')
-//   }
-
-//   setView (view) {
-//     STORE.view = view//
-//     render()
-//   }
-//   }
-//   let valueIndex = STORE.currentQuestion;
-//   const question = STORE.prompt[valueIndex]['question'];
-//   console.log('question', question);
-//   return question.join('');
-// }
-
+  return question;
+}
+generateQuestionString();
 
 function generateFeedbackHTML() {
   const feedbackText = ` <div class="right">You got it right</div>
